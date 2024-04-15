@@ -1,0 +1,51 @@
+stages:
+  - build
+  - push
+  - deploy
+
+image:
+  - docker:latest
+
+services:
+  - docker:dind
+
+build_mysql_image:
+  stage: build
+  script:
+    - sleep 3600s
+    - #docker build -t my-db:abcd ./db/
+
+build_django_image:
+  stage: build
+  script:
+    - echo "Building Django image"
+
+push_mysql_image:
+  stage: push
+  script:
+    - echo "Pushing MySQL image to Dockerhub"
+
+push_django_image:
+  stage: push
+  script:
+    - echo "Pushing Django image to Dockerhub"
+    - exit 1
+
+
+
+
+
+
+# push_image:
+#   stage: push
+#   image: docker:latest
+#   services:
+#     - docker:dind
+#   script:
+#     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+#     - export CI_REGISTRY_IMAGE=index.docker.io/georgikh/test_image
+#     - export CI_COMMIT_REF_SLUG="latest"
+#     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+#   only:
+#     - main
+
