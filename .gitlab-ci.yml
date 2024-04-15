@@ -3,10 +3,9 @@ stages:
   - push
   - deploy
 
-image:
-  - docker:latest
+image: docker:latest
 
-services:
+services: 
   - docker:dind
 
 build_mysql_image:
