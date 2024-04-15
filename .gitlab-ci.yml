@@ -3,7 +3,8 @@ stages:
   - push
   - deploy
 
-image: docker:latest
+image: 
+  docker:latest
 
 services: 
   - docker:dind
@@ -12,7 +13,6 @@ build_mysql_image:
   stage: build
   script:
     - sleep 3600s
-    - #docker build -t my-db:abcd ./db/
 
 build_django_image:
   stage: build
