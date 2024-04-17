@@ -34,7 +34,6 @@ push_django_image:
   script:
     - docker images
     - echo "Pushing Django image to Dockerhub"
-    - exit 1
 
 
 
