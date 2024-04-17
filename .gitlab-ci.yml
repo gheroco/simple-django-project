@@ -11,12 +11,13 @@ services:
 build_mysql_image:
   stage: build
   script:
-    - docker build -t my-db:$CI_COMMIT_SHA ./db/
+    - printenv
+    # - docker build -t my-db:$CI_COMMIT_SHA ./db/
 
-build_django_image:
-  stage: build
-  script:
-    - docker build -t my-app:$CI_COMMIT_SHA .
+# build_django_image:
+#   stage: build
+#   script:
+#     - docker build -t my-app:$CI_COMMIT_SHA .
 
 # push_mysql_image:
 #   stage: push
