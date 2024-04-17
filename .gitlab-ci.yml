@@ -19,7 +19,7 @@ build_django_image:
   stage: build
   script:
     - docker build -t my-app:$CI_COMMIT_SHORT_SHA .
-    - docker tag my-db:$CI_COMMIT_SHORT_SHA my-db:latest
+    - docker tag my-app:$CI_COMMIT_SHORT_SHA my-app:latest
     - docker images
 
 
