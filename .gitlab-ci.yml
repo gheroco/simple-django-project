@@ -11,7 +11,7 @@ services:
 build_mysql_image:
   stage: build
   script:
-    - export CI_IMAGE_NAMESPACE=georgi.heroco
+    - export CI_IMAGE_NAMESPACE=georgiheroco
     - docker login -u $CI_USER -p $CI_PASSWORD $CI_HOST
     - docker build -t $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA ./db/
     - docker tag $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA $CI_IMAGE_NAMESPACE/my-db:latest
