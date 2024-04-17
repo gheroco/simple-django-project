@@ -23,16 +23,18 @@ build_django_image:
     - docker images
 
 
-# push_mysql_image:
-#   stage: push
-#   script:
-#     - echo "Pushing MySQL image to Dockerhub"
+push_mysql_image:
+  stage: push
+  script:
+    - docker images
+    - echo "Pushing MySQL image to Dockerhub"
 
-# push_django_image:
-#   stage: push
-#   script:
-#     - echo "Pushing Django image to Dockerhub"
-#     - exit 1
+push_django_image:
+  stage: push
+  script:
+    - docker images
+    - echo "Pushing Django image to Dockerhub"
+    - exit 1
 
 
 
