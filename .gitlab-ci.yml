@@ -21,9 +21,12 @@ build_mysql_image:
 build_django_image:
   stage: build
   script:
-    - docker build -t my-app:$CI_COMMIT_SHORT_SHA .
-    - docker tag my-app:$CI_COMMIT_SHORT_SHA my-app:latest
-    - docker images
+    - export CI_IMAGE_NAMESPACE=georgiheroco
+    - docker login -u $CI_USER -p $CI_PASSWORD $CI_HOST
+    - docker build -t $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA .
+    - docker tag $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA $CI_IMAGE_NAMESPACE/my-app:latest
+    - docker push $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_IMAGE_NAMESPACE/my-app:latest
 
 
 push_mysql_image:
