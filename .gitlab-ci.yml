@@ -11,8 +11,8 @@ services:
 build_mysql_image:
   stage: build
   script:
-    - docker build -t my-db:$CI_COMMIT_SHORT_SHA ./db/
-    - docker save my-db:$CI_COMMIT_SHORT_SHA > my_db_$CI_COMMIT_SHORT_SHA.tar.gz
+    - docker build -t my_db:$CI_COMMIT_SHORT_SHA ./db/
+    - docker save my_db:$CI_COMMIT_SHORT_SHA > my_db_$CI_COMMIT_SHORT_SHA.tar.gz
   artifacts:
     expire_in: 1h
     paths:
