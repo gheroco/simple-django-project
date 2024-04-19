@@ -37,8 +37,11 @@ build_django_image:
 push_mysql_image:
   stage: push
   script:
+    - docker load < my-db_$CI_COMMIT_SHORT_SHA.tar.gz
     - docker images
     - echo "Pushing MySQL image to Dockerhub"
+  dependencies:
+    - build_mysql_image
 
 push_django_image:
   stage: push
