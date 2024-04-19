@@ -15,8 +15,13 @@ build_mysql_image:
     - docker login -u $CI_USER -p $CI_PASSWORD $CI_HOST
     - docker build -t $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA ./db/
     - docker tag $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA $CI_IMAGE_NAMESPACE/my-db:latest
-    - docker push $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA
-    - docker push $CI_IMAGE_NAMESPACE/my-db:latest
+    - docker save $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA > my-db_$CI_COMMIT_SHORT_SHA.tar.gz
+    # - docker push $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA
+    # - docker push $CI_IMAGE_NAMESPACE/my-db:latest
+  
+  artifacts:
+    paths:
+      - my-db_$CI_COMMIT_SHORT_SHA.tar.gz
 
 build_django_image:
   stage: build
