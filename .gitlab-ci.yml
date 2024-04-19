@@ -12,38 +12,39 @@ build_mysql_image:
   stage: build
   script:
     - docker build -t my-db:$CI_COMMIT_SHORT_SHA ./db/
-    - pwd
     - docker save my-db:$CI_COMMIT_SHORT_SHA > my_db_$CI_COMMIT_SHORT_SHA.tar.gz
-    - ls -la
-    # - docker build -t $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA ./db/
-    # - docker tag $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA $CI_IMAGE_NAMESPACE/my-db:latest
-    # - docker push $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA
-    # - docker push $CI_IMAGE_NAMESPACE/my-db:latest
   artifacts:
     expire_in: 1h
     paths:
       - my_db_$CI_COMMIT_SHORT_SHA.tar.gz
 
 
-# build_django_image:
-#   stage: build
-#   script:
-#     - export CI_IMAGE_NAMESPACE=georgiheroco
-#     - docker login -u $CI_USER -p $CI_PASSWORD $CI_HOST
-#     - docker build -t $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA .
-#     - docker tag $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA $CI_IMAGE_NAMESPACE/my-app:latest
-#     - docker push $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA
-#     - docker push $CI_IMAGE_NAMESPACE/my-app:latest
+build_django_image:
+  stage: build
+  script:
+    - docker build -t my-app:$CI_COMMIT_SHORT_SHA .
+    - docker save my-app:$CI_COMMIT_SHORT_SHA > my-app_$CI_COMMIT_SHORT_SHA.tar.gz
+  
+  artifacts:
+    expire_in: 1h
+    paths:
+      - my-app_$CI_COMMIT_SHORT_SHA.tar.gz
 
 
-# push_mysql_image:
-#   stage: push
-#   script:
-#     - export CI_IMAGE_NAMESPACE=georgiheroco
-#     - docker login -u $CI_USER -p $CI_PASSWORD $CI_HOST
 
-#     - docker images
-#     - echo "Pushing MySQL image to Dockerhub"
+push_mysql_image:
+  stage: push
+  script:
+    - ls -la
+    # - export CI_IMAGE_NAMESPACE=georgiheroco
+    # - docker login -u $CI_USER -p $CI_PASSWORD $CI_HOST
+
+    # - docker images
+    # - echo "Pushing MySQL image to Dockerhub"
+
+    
+  dependencies:
+    - build_mysql_image
 
 # push_django_image:
 #   stage: push
