@@ -11,35 +11,45 @@ services:
 build_mysql_image:
   stage: build
   script:
-    - export CI_IMAGE_NAMESPACE=georgiheroco
-    - docker login -u $CI_USER -p $CI_PASSWORD $CI_HOST
-    - docker build -t $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA ./db/
-    - docker tag $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA $CI_IMAGE_NAMESPACE/my-db:latest
-    - docker push $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA
-    - docker push $CI_IMAGE_NAMESPACE/my-db:latest
-
-build_django_image:
-  stage: build
-  script:
-    - export CI_IMAGE_NAMESPACE=georgiheroco
-    - docker login -u $CI_USER -p $CI_PASSWORD $CI_HOST
-    - docker build -t $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA .
-    - docker tag $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA $CI_IMAGE_NAMESPACE/my-app:latest
-    - docker push $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA
-    - docker push $CI_IMAGE_NAMESPACE/my-app:latest
+    - docker build -t my-db:$CI_COMMIT_SHORT_SHA ./db/
+    - pwd
+    - docker save my-db:$CI_COMMIT_SHORT_SHA > my_db_$CI_COMMIT_SHORT_SHA.tar.gz
+    - ls -la
+    # - docker build -t $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA ./db/
+    # - docker tag $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA $CI_IMAGE_NAMESPACE/my-db:latest
+    # - docker push $CI_IMAGE_NAMESPACE/my-db:$CI_COMMIT_SHORT_SHA
+    # - docker push $CI_IMAGE_NAMESPACE/my-db:latest
+  artifacts:
+    expire_in: 1h
+    paths:
+      - my_db_$CI_COMMIT_SHORT_SHA.tar.gz
 
 
-push_mysql_image:
-  stage: push
-  script:
-    - docker images
-    - echo "Pushing MySQL image to Dockerhub"
+# build_django_image:
+#   stage: build
+#   script:
+#     - export CI_IMAGE_NAMESPACE=georgiheroco
+#     - docker login -u $CI_USER -p $CI_PASSWORD $CI_HOST
+#     - docker build -t $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA .
+#     - docker tag $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA $CI_IMAGE_NAMESPACE/my-app:latest
+#     - docker push $CI_IMAGE_NAMESPACE/my-app:$CI_COMMIT_SHORT_SHA
+#     - docker push $CI_IMAGE_NAMESPACE/my-app:latest
 
-push_django_image:
-  stage: push
-  script:
-    - docker images
-    - echo "Pushing Django image to Dockerhub"
+
+# push_mysql_image:
+#   stage: push
+#   script:
+#     - export CI_IMAGE_NAMESPACE=georgiheroco
+#     - docker login -u $CI_USER -p $CI_PASSWORD $CI_HOST
+
+#     - docker images
+#     - echo "Pushing MySQL image to Dockerhub"
+
+# push_django_image:
+#   stage: push
+#   script:
+#     - docker images
+#     - echo "Pushing Django image to Dockerhub"
 
 
 
