@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: staging
     services:
       docker:
         image: docker:dind
@@ -51,6 +52,7 @@ jobs:
   push:
     needs: build
     runs-on: ubuntu-latest
+    environment: staging
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -78,6 +80,7 @@ jobs:
 
   deploy:
     needs: push
+    environment: staging
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
