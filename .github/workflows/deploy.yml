@@ -64,6 +64,7 @@ jobs:
 
       - name: Load and Push MySQL Image
         run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} docker.io
           docker load < my_db_${{ github.sha }}.tar.gz
           docker tag my_db:${{ github.sha }} ${{ secrets.DOCKER_NAMESPACE }}/my_db:${{ github.sha }}
           docker tag my_db:${{ github.sha }} ${{ secrets.DOCKER_NAMESPACE }}/my_db:latest
