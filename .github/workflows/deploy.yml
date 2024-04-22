@@ -1,0 +1,97 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  # pull_request:
+  #   branches:
+  #     - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+        
+      - name: Build MySQL Image
+        run: |
+          docker build -t my_db:${{ github.sha }} ./db/
+          docker save my_db:${{ github.sha }} > my_db_${{ github.sha }}.tar.gz
+
+      - name: Build Django Image
+        run: |
+          docker build -t my-app:${{ github.sha }} .
+          docker save my-app:${{ github.sha }} > my-app_${{ github.sha }}.tar.gz
+
+      - name: Upload Docker Images as Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-images
+          path: |
+            my_db_${{ github.sha }}.tar.gz
+            my-app_${{ github.sha }}.tar.gz
+          retention-days: 1
+
+  push:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: docker-images
+
+      - name: Load and Push MySQL Image
+        run: |
+          docker load < my_db_${{ github.sha }}.tar.gz
+          docker tag my_db:${{ github.sha }} ${{ secrets.DOCKER_NAMESPACE }}/my_db:${{ github.sha }}
+          docker tag my_db:${{ github.sha }} ${{ secrets.DOCKER_NAMESPACE }}/my_db:latest
+          docker push ${{ secrets.DOCKER_NAMESPACE }}/my_db:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_NAMESPACE }}/my_db:latest
+
+      - name: Load and Push Django Image
+        run: |
+          docker load < my-app_${{ github.sha }}.tar.gz
+          docker tag my-app:${{ github.sha }} ${{ secrets.DOCKER_NAMESPACE }}/my-app:${{ github.sha }}
+          docker tag my-app:${{ github.sha }} ${{ secrets.DOCKER_NAMESPACE }}/my-app:latest
+          docker push ${{ secrets.DOCKER_NAMESPACE }}/my-app:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_NAMESPACE }}/my-app:latest
+
+  deploy:
+    needs: push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_NAMESPACE }}/my_db:latest
+            docker pull ${{ secrets.DOCKER_NAMESPACE }}/my-app:latest
+            docker-compose down
+            docker-compose up -d
+
+# Note: You need to have a docker-compose.yml file on your EC2 instance configured correctly.
