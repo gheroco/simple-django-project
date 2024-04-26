@@ -94,6 +94,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            cd ~/simple-django-projoect
             docker pull ${{ secrets.DOCKER_NAMESPACE }}/my_db:latest
             docker pull ${{ secrets.DOCKER_NAMESPACE }}/my-app:latest
             docker-compose down
